@@ -4,7 +4,7 @@
  */
 
 // Базовый URL API + cors proxy
-const API_BASE_URL = "https://exam-api-courses.std-900.ist.mospolytech.ru/api"
+const API_BASE_URL = "http://exam-api-courses.std-900.ist.mospolytech.ru/api"
 const CORS_PROXY = "https://api.allorigins.win/raw?url="
 
 async function apiGet(endpoint) {
