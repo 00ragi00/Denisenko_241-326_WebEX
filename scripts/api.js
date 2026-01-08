@@ -3,8 +3,23 @@
  * Содержит обёртки для fetch с API key
  */
 
-// Базовый URL API
+// Базовый URL API + cors proxy
 const API_BASE_URL = "http://exam-api-courses.std-900.ist.mospolytech.ru/api"
+const CORS_PROXY = "https://api.allorigins.win/raw?url="
+
+async function apiGet(endpoint) {
+    const apiKey = getApiKey()
+    const fullUrl = `${API_BASE_URL}${endpoint}?api_key=${apiKey}`
+    
+    // Если GitHub Pages - используем прокси
+    const isGithubPages = window.location.hostname.includes('github.io')
+    const url = isGithubPages 
+        ? CORS_PROXY + encodeURIComponent(fullUrl)
+        : fullUrl
+    
+    const response = await fetch(url)
+    return response.json()
+}
 
 // Получить ключ можно по ссылке в СДО Московского Политеха
 function getApiKey() {
