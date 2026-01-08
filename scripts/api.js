@@ -4,7 +4,7 @@
  */
 
 // Базовый URL API
-const API_BASE_URL = "http://exam-api-courses.std-900.ist.mospolytech.ru/api"
+const API_BASE_URL = "https://exam-api-courses.std-900.ist.mospolytech.ru/api"
 
 // Получить ключ можно по ссылке в СДО Московского Политеха
 function getApiKey() {
