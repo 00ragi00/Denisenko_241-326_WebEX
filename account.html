@@ -9,7 +9,7 @@
     <link href="styles/style.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Навигация -->
+    <!-- Шапка сайта -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="index.html">
@@ -22,37 +22,43 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.html">Главная</a>
+                        <a class="nav-link" href="index.html">
+                            <i class="bi bi-house me-1"></i>На главную
+                        </a>
                     </li>
-                    <li class="nav-item" id="nav-auth-section"></li>
+                    <li class="nav-item" id="nav-auth-section">
+                        <button class="nav-link btn btn-outline-light ms-lg-3 px-3" data-bs-toggle="modal" data-bs-target="#authModal">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Войти
+                        </button>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Уведомления -->
+    <!-- Область уведомлений -->
     <div id="notification-area" class="position-fixed top-0 end-0 p-3" style="z-index: 1100;"></div>
 
-    <!-- Основное содержимое -->
+    <!-- Личный кабинет -->
     <section class="py-5">
         <div class="container">
             <h1 class="mb-4"><i class="bi bi-person-circle me-2"></i>Личный кабинет</h1>
-
-            <!-- Требуется авторизация -->
+            
+            <!-- Блок для неавторизованных пользователей -->
             <div id="auth-required-block" class="d-none">
                 <div class="card shadow-sm">
                     <div class="card-body text-center py-5">
                         <i class="bi bi-lock text-muted" style="font-size: 4rem;"></i>
                         <h4 class="text-muted mt-3">Требуется авторизация</h4>
-                        <p class="text-muted">Войдите в систему, чтобы посмотреть свои заявки</p>
+                        <p class="text-muted">Для доступа к личному кабинету необходимо войти в систему</p>
                         <button class="btn btn-primary" id="showAuthModalBtn">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Войти
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Войти
                         </button>
                     </div>
                 </div>
             </div>
-
-            <!-- Таблица заявок -->
+            
+            <!-- Блок с заявками (для авторизованных) -->
             <div id="orders-block" class="d-none">
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
@@ -63,9 +69,9 @@
                             <table class="table table-hover align-middle">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Курс/Репетитор</th>
-                                        <th>Дата</th>
+                                        <th>№</th>
+                                        <th>Название курса/Репетитор</th>
+                                        <th>Дата занятия</th>
                                         <th>Стоимость</th>
                                         <th>Действия</th>
                                     </tr>
@@ -81,84 +87,60 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- Пустое состояние -->
+                        <div id="empty-orders" class="text-center py-5 d-none">
+                            <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+                            <h4 class="text-muted mt-3">У вас пока нет заявок</h4>
+                            <p class="text-muted">Перейдите на главную страницу, чтобы выбрать курс или репетитора</p>
+                            <a href="index.html" class="btn btn-primary">Выбрать курс</a>
+                        </div>
+
+                        <!-- Пагинация -->
+                        <nav id="orders-pagination" class="mt-4" aria-label="Навигация по заявкам">
+                            <ul class="pagination justify-content-center"></ul>
+                        </nav>
                     </div>
                 </div>
-
-                <!-- Пустое состояние -->
-                <div id="empty-orders" class="text-center py-5 d-none">
-                    <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
-                    <h4 class="text-muted mt-3">Заявок нет</h4>
-                    <p class="text-muted">Вернитесь на главную и создайте первую заявку</p>
-                    <a href="index.html" class="btn btn-primary">К курсам и репетиторам</a>
-                </div>
-
-                <!-- Пагинация -->
-                <nav id="orders-pagination" class="mt-4" aria-label="Page navigation">
-                    <ul class="pagination justify-content-center"></ul>
-                </nav>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Футер -->
     <footer class="bg-dark text-white py-4 mt-auto">
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-3 mb-md-0">
                     <h5><i class="bi bi-translate me-2"></i>LinguaSchool</h5>
-                    <p class="text-muted small">Ваш партнер в изучении иностранных языков.</p>
+                    <p class="text-muted small">Ваш путь к свободному владению иностранными языками начинается здесь.</p>
                 </div>
                 <div class="col-md-4 mb-3 mb-md-0">
                     <h6>Контакты</h6>
-                    <p class="text-muted small">+7 495 123-45-67</p>
+                    <p class="text-muted small mb-0">+7 (495) 123-45-67</p>
+                    <p class="text-muted small">info@linguaschool.ru</p>
                 </div>
                 <div class="col-md-4">
-                    <h6>Соцсети</h6>
+                    <h6>Мы в соцсетях</h6>
                     <a href="#" class="text-white me-3 fs-4"><i class="bi bi-telegram"></i></a>
                     <a href="#" class="text-white me-3 fs-4"><i class="bi bi-vk"></i></a>
                     <a href="#" class="text-white fs-4"><i class="bi bi-youtube"></i></a>
                 </div>
             </div>
             <hr class="my-3">
-            <p class="text-center text-muted small mb-0">© 2025 LinguaSchool. Все права защищены.</p>
+            <p class="text-center text-muted small mb-0">&copy; 2025 LinguaSchool. Все права защищены.</p>
         </div>
     </footer>
 
-    <!-- Модалка авторизации -->
-    <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="authModalLabel">API Авторизация</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="authForm">
-                        <div class="mb-3">
-                            <label for="apiKeyInput" class="form-label">API Ключ</label>
-                            <input type="text" class="form-control" id="apiKeyInput" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}" required>
-                            <div class="form-text">Введите ваш уникальный API ключ (UUIDv4 формат). Если у вас нет ключа, обратитесь в поддержку.</div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="button" class="btn btn-primary" id="loginBtn">Вход</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Модалка просмотра заявки -->
+    <!-- Модальное окно подробностей заказа -->
     <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-info text-white">
-                    <h5 class="modal-title" id="orderDetailsModalLabel">Детали заявки</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="orderDetailsModalLabel">Подробности заявки</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
                 <div class="modal-body" id="orderDetailsContent">
-                    <!-- Содержимое загружается здесь -->
+                    <!-- Контент подгружается динамически -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
@@ -167,13 +149,13 @@
         </div>
     </div>
 
-    <!-- Модалка редактирования заявки -->
+    <!-- Модальное окно редактирования заказа -->
     <div class="modal fade" id="editOrderModal" tabindex="-1" aria-labelledby="editOrderModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-warning">
                     <h5 class="modal-title" id="editOrderModalLabel">Редактирование заявки</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
                 <div class="modal-body">
                     <form id="editOrderForm">
@@ -181,99 +163,97 @@
                         <input type="hidden" id="editOrderType">
                         <input type="hidden" id="editCourseId">
                         <input type="hidden" id="editTutorId">
-
+                        
                         <div class="row g-3">
                             <!-- Название -->
                             <div class="col-md-6">
-                                <label for="editOrderName" class="form-label">Название курса/репетитора</label>
+                                <label for="editOrderName" class="form-label">Курс/Репетитор</label>
                                 <input type="text" class="form-control" id="editOrderName" readonly>
                             </div>
-
-                            <!-- Преподаватель/уровень -->
                             <div class="col-md-6">
-                                <label for="editOrderTeacher" class="form-label">Преподаватель/Уровень</label>
+                                <label for="editOrderTeacher" class="form-label">Преподаватель</label>
                                 <input type="text" class="form-control" id="editOrderTeacher" readonly>
                             </div>
 
-                            <!-- Дата -->
+                            <!-- Дата начала -->
                             <div class="col-md-6">
-                                <label for="editDateStart" class="form-label">Дата</label>
-                                <select class="form-select" id="editDateStart" required></select>
+                                <label for="editDateStart" class="form-label">Дата начала</label>
+                                <select class="form-select" id="editDateStart" required>
+                                </select>
                             </div>
 
-                            <!-- Время -->
+                            <!-- Время занятий -->
                             <div class="col-md-6">
-                                <label for="editTimeStart" class="form-label">Время</label>
-                                <select class="form-select" id="editTimeStart" required></select>
+                                <label for="editTimeStart" class="form-label">Время занятий</label>
+                                <select class="form-select" id="editTimeStart" required>
+                                </select>
                             </div>
 
-                            <!-- Длительность -->
+                            <!-- Продолжительность -->
                             <div class="col-md-6">
-                                <label for="editDuration" class="form-label">Длительность</label>
+                                <label for="editDuration" class="form-label">Продолжительность</label>
                                 <input type="text" class="form-control" id="editDuration" readonly>
                                 <input type="hidden" id="editDurationHours">
                                 <input type="hidden" id="editWeekLength">
                                 <input type="hidden" id="editTotalLength">
                             </div>
 
-                            <!-- Количество человек -->
+                            <!-- Количество студентов -->
                             <div class="col-md-6">
-                                <label for="editPersons" class="form-label">Количество человек</label>
+                                <label for="editPersons" class="form-label">Количество студентов</label>
                                 <input type="number" class="form-control" id="editPersons" min="1" max="20" required>
                             </div>
 
-                            <!-- Опции -->
+                            <!-- Дополнительные опции -->
                             <div class="col-12">
                                 <label class="form-label">Дополнительные опции</label>
                                 <div class="row g-2">
                                     <div class="col-md-4">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="editOptEarlyReg" disabled>
-                                            <label class="form-check-label" for="editOptEarlyReg">Раннее бронирование -10%</label>
+                                            <label class="form-check-label" for="editOptEarlyReg">Ранняя регистрация (-10%)</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="editOptGroupEnroll" disabled>
-                                            <label class="form-check-label" for="editOptGroupEnroll">Групповое обучение -15%</label>
+                                            <label class="form-check-label" for="editOptGroupEnroll">Групповая запись (-15%)</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="editOptIntensive" disabled>
-                                            <label class="form-check-label" for="editOptIntensive">Интенсивный курс +20%</label>
+                                            <label class="form-check-label" for="editOptIntensive">Интенсивный курс (+20%)</label>
                                         </div>
                                     </div>
-
                                     <div class="col-md-4">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="editOptSupplementary">
-                                            <label class="form-check-label" for="editOptSupplementary">Доп. материалы +2000 руб.</label>
+                                            <label class="form-check-label" for="editOptSupplementary">Доп. материалы (+2000₽/чел.)</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="editOptPersonalized">
-                                            <label class="form-check-label" for="editOptPersonalized">Персонализир. подход +1500 руб.</label>
+                                            <label class="form-check-label" for="editOptPersonalized">Индивид. занятия (+1500₽/нед.)</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="editOptExcursions">
-                                            <label class="form-check-label" for="editOptExcursions">Экскурсии +2500 руб.</label>
+                                            <label class="form-check-label" for="editOptExcursions">Экскурсии (+25%)</label>
                                         </div>
                                     </div>
-
                                     <div class="col-md-4">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="editOptAssessment">
-                                            <label class="form-check-label" for="editOptAssessment">Тестирование +300 руб.</label>
+                                            <label class="form-check-label" for="editOptAssessment">Оценка уровня (+300₽)</label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="editOptInteractive">
-                                            <label class="form-check-label" for="editOptInteractive">Интерактив. задания +500 руб.</label>
+                                            <label class="form-check-label" for="editOptInteractive">Интерактив. платформа (+50%)</label>
                                         </div>
                                     </div>
                                 </div>
@@ -283,10 +263,10 @@
                             <div class="col-12">
                                 <div class="alert alert-info">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <span class="fw-bold">Итоговая стоимость:</span>
-                                        <span class="fs-4 fw-bold" id="editOrderPrice">0</span>
+                                        <span class="fw-bold">Общая стоимость:</span>
+                                        <span class="fs-4 fw-bold" id="editOrderPrice">0 ₽</span>
+                                        <input type="hidden" id="editOrderPriceValue">
                                     </div>
-                                    <input type="hidden" id="editOrderPriceValue">
                                     <small id="editPriceBreakdown" class="text-muted d-block mt-2"></small>
                                 </div>
                             </div>
@@ -295,35 +275,65 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="button" class="btn btn-warning" id="saveEditOrder">Сохранить изменения</button>
+                    <button type="button" class="btn btn-warning" id="saveEditOrder">Сохранить</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Модалка удаления заявки -->
+    <!-- Модальное окно подтверждения удаления -->
     <div class="modal fade" id="deleteOrderModal" tabindex="-1" aria-labelledby="deleteOrderModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title" id="deleteOrderModalLabel">Удаление заявки</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title" id="deleteOrderModalLabel">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Вы уверены, что хотите удалить эту заявку?</p>
+                    <p>Вы уверены, что хотите удалить заявку?</p>
                     <input type="hidden" id="deleteOrderId">
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteOrder">Да</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно авторизации -->
+    <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="authModalLabel">Вход в систему</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="authForm">
+                        <div class="mb-3">
+                            <label for="apiKeyInput" class="form-label">API ключ</label>
+                            <input type="text" class="form-control" id="apiKeyInput" 
+                                   placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" 
+                                   pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+                                   required>
+                            <div class="form-text">
+                                Введите ваш персональный API ключ (UUIDv4), полученный по ссылке в СДО Московского Политеха.
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteOrder">Удалить</button>
+                    <button type="button" class="btn btn-primary" id="loginBtn">Войти</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="scripts/api.js"></script>
     <script src="scripts/price.js"></script>
+    <script src="scripts/api.js"></script>
     <script src="scripts/app.js"></script>
 </body>
 </html>

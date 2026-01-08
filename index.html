@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinguaSchool - Обучение языкам</title>
+    <title>LinguaSchool - Языковая школа</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="styles/style.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Навигация -->
+    <!-- Шапка сайта -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="index.html">
@@ -22,17 +22,23 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="index.html">Главная</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#courses">Курсы</a>
+                        <a class="nav-link active" href="#courses">Курсы</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#tutors">Репетиторы</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">О нас</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#resources-map">Карта ресурсов</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contacts">Контакты</a>
+                    </li>
                     <li class="nav-item" id="nav-auth-section">
                         <button class="nav-link btn btn-outline-light ms-lg-3 px-3" data-bs-toggle="modal" data-bs-target="#authModal">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Вход
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Войти
                         </button>
                     </li>
                 </ul>
@@ -40,17 +46,17 @@
         </div>
     </nav>
 
-    <!-- Уведомления -->
+    <!-- Область уведомлений -->
     <div id="notification-area" class="position-fixed top-0 end-0 p-3" style="z-index: 1100;"></div>
 
-    <!-- Героическая секция -->
+    <!-- Главный баннер -->
     <section class="hero-section bg-primary text-white py-5">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold mb-4">Изучайте языки с нами</h1>
-                    <p class="lead mb-4">Профессиональные курсы и индивидуальные занятия с опытными репетиторами.</p>
-                    <a href="#courses" class="btn btn-light btn-lg">Начать обучение</a>
+                    <h1 class="display-4 fw-bold mb-4">Откройте мир новых возможностей</h1>
+                    <p class="lead mb-4">Изучайте иностранные языки с лучшими преподавателями. Индивидуальный подход, современные методики, гибкое расписание.</p>
+                    <a href="#courses" class="btn btn-light btn-lg">Выбрать курс</a>
                 </div>
                 <div class="col-lg-6 text-center d-none d-lg-block">
                     <i class="bi bi-globe2" style="font-size: 200px; opacity: 0.3;"></i>
@@ -59,55 +65,584 @@
         </div>
     </section>
 
-    <!-- Модалка авторизации -->
-    <div class="modal fade" id="authModal" tabindex="-1">
-        <div class="modal-dialog">
+    <!-- Блок описания школы -->
+    <section id="about" class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="mb-4">О нашей школе</h2>
+                    <p class="lead text-muted">
+                        LinguaSchool — это современная языковая школа с более чем 10-летним опытом преподавания иностранных языков. 
+                        Наша миссия — сделать изучение языков доступным, эффективным и увлекательным для каждого студента. 
+                        Мы используем инновационные методики обучения и индивидуальный подход к каждому ученику.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Преимущества изучения языков (Bootstrap Grid) -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Преимущества изучения иностранных языков</h2>
+            <div class="row g-4">
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+                        <div class="card-body">
+                            <i class="bi bi-briefcase text-primary fs-1 mb-3"></i>
+                            <h5 class="card-title">Карьерные возможности</h5>
+                            <p class="card-text text-muted">Знание языков открывает двери к международным компаниям и высокооплачиваемым позициям.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+                        <div class="card-body">
+                            <i class="bi bi-airplane text-primary fs-1 mb-3"></i>
+                            <h5 class="card-title">Путешествия</h5>
+                            <p class="card-text text-muted">Свободно общайтесь с местными жителями и погружайтесь в культуру других стран.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+                        <div class="card-body">
+                            <i class="bi bi-lightbulb text-primary fs-1 mb-3"></i>
+                            <h5 class="card-title">Развитие мозга</h5>
+                            <p class="card-text text-muted">Изучение языков улучшает память, концентрацию и когнитивные способности.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card h-100 border-0 shadow-sm text-center p-4">
+                        <div class="card-body">
+                            <i class="bi bi-people text-primary fs-1 mb-3"></i>
+                            <h5 class="card-title">Новые знакомства</h5>
+                            <p class="card-text text-muted">Расширяйте круг общения и заводите друзей по всему миру.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Курсы -->
+    <section id="courses" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-4">Наши курсы</h2>
+            
+            <!-- Форма поиска курсов -->
+            <div class="row mb-4">
+                <div class="col-md-8 mx-auto">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="searchCourse" class="form-label">Поиск по названию</label>
+                                    <input type="text" class="form-control" id="searchCourse" placeholder="Введите название курса...">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="filterLevel" class="form-label">Уровень</label>
+                                    <select class="form-select" id="filterLevel">
+                                        <option value="">Все уровни</option>
+                                        <option value="Beginner">Начальный (Beginner)</option>
+                                        <option value="Intermediate">Средний (Intermediate)</option>
+                                        <option value="Advanced">Продвинутый (Advanced)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Список курсов -->
+            <div id="courses-container" class="row g-4">
+                <div class="col-12 text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Загрузка...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Пагинация курсов -->
+            <nav id="courses-pagination" class="mt-4" aria-label="Навигация по курсам">
+                <ul class="pagination justify-content-center"></ul>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Репетиторы -->
+    <section id="tutors" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Наши репетиторы</h2>
+            
+            <!-- Форма поиска репетиторов -->
+            <div class="row mb-4">
+                <div class="col-md-10 mx-auto">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="filterTutorLanguage" class="form-label">Предлагаемые языки</label>
+                                    <select class="form-select" id="filterTutorLanguage">
+                                        <option value="">Все языки</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="filterTutorLevel" class="form-label">Уровень языка</label>
+                                    <select class="form-select" id="filterTutorLevel">
+                                        <option value="">Все уровни</option>
+                                        <option value="Beginner">Начальный (Beginner)</option>
+                                        <option value="Intermediate">Средний (Intermediate)</option>
+                                        <option value="Advanced">Продвинутый (Advanced)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="filterTutorExperience" class="form-label">Опыт (мин. лет)</label>
+                                    <input type="number" class="form-control" id="filterTutorExperience" min="0" placeholder="0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Таблица репетиторов -->
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Фото</th>
+                            <th>Имя</th>
+                            <th>Уровень</th>
+                            <th>Языки</th>
+                            <th>Опыт</th>
+                            <th>Ставка (руб./час)</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tutors-container">
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Загрузка...</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Переделанная секция с Яндекс Картой - карта слева, результаты справа -->
+    <section id="resources-map" class="py-5 bg-light">
+        <div class="container-fluid px-4">
+            <h2 class="text-center mb-4">Карта языковых школ</h2>
+            <p class="text-center text-muted mb-4">Найдите ближайшие школы и курсы иностранных языков в Москве</p>
+            
+            <div class="row mb-4">
+                <div class="col-md-6 mx-auto">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <label for="mapSearchQuery" class="form-label">Поиск языковых школ</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="mapSearchQuery" placeholder="Район или адрес (например: Тверская, Арбат)">
+                                <button class="btn btn-primary" id="searchMapBtn">
+                                    <i class="bi bi-search me-1"></i>Найти
+                                </button>
+                            </div>
+                            <small class="text-muted mt-1 d-block">Поиск курсов английского, немецкого, французского и других языков</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Карта и список результатов в ряд -->
+            <div class="row">
+                <!-- Карта слева -->
+                <div class="col-lg-8 mb-4 mb-lg-0">
+                    <div id="yandex-map" style="width: 100%; height: 500px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);"></div>
+                </div>
+                <!-- Список результатов справа -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-geo-alt me-2"></i>Языковые школы</h5>
+                        </div>
+                        <div class="card-body p-0">
+                            <div id="map-results" class="map-results-list" style="max-height: 452px; overflow-y: auto;">
+                                <div class="text-center py-5 text-muted">
+                                    <i class="bi bi-search" style="font-size: 2rem;"></i>
+                                    <p class="mt-2 mb-0">Нажмите "Найти" для поиска</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Контакты -->
+    <section id="contacts" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Контакты</h2>
+            <div class="row g-4">
+                <div class="col-md-4 text-center">
+                    <i class="bi bi-geo-alt text-primary fs-1 mb-3"></i>
+                    <h5>Адрес</h5>
+                    <p class="text-muted">г. Москва, ул. Большая Семёновская, д. 38</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="bi bi-telephone text-primary fs-1 mb-3"></i>
+                    <h5>Телефон</h5>
+                    <p class="text-muted">+7 (495) 123-45-67</p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <i class="bi bi-envelope text-primary fs-1 mb-3"></i>
+                    <h5>Email</h5>
+                    <p class="text-muted">info@linguaschool.ru</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h5><i class="bi bi-translate me-2"></i>LinguaSchool</h5>
+                    <p class="text-muted small">Ваш путь к свободному владению иностранными языками начинается здесь.</p>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h6>Полезные ссылки</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="#courses" class="text-muted text-decoration-none">Курсы</a></li>
+                        <li><a href="#tutors" class="text-muted text-decoration-none">Репетиторы</a></li>
+                        <li><a href="account.html" class="text-muted text-decoration-none">Личный кабинет</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6>Мы в соцсетях</h6>
+                    <a href="#" class="text-white me-3 fs-4"><i class="bi bi-telegram"></i></a>
+                    <a href="#" class="text-white me-3 fs-4"><i class="bi bi-vk"></i></a>
+                    <a href="#" class="text-white fs-4"><i class="bi bi-youtube"></i></a>
+                </div>
+            </div>
+            <hr class="my-3">
+            <p class="text-center text-muted small mb-0">&copy; 2025 LinguaSchool. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <!-- Модальное окно заявки на курс -->
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="authModalLabel">API Авторизация</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="orderModalLabel">Оформление заявки</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="authForm">
-                        <div class="mb-3">
-                            <label for="apiKeyInput" class="form-label">API Ключ</label>
-                            <input type="text" class="form-control" id="apiKeyInput" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" required>
-                            <div class="form-text">Введите ваш уникальный API ключ (UUIDv4 формат).</div>
+                    <form id="orderForm">
+                        <input type="hidden" id="orderId">
+                        <input type="hidden" id="orderType" value="course">
+                        
+                        <div class="row g-3">
+                            <!-- Название курса/репетитора -->
+                            <div class="col-md-6">
+                                <label for="orderCourseName" class="form-label">Название курса</label>
+                                <input type="text" class="form-control" id="orderCourseName" readonly>
+                                <input type="hidden" id="orderCourseId">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="orderTeacherName" class="form-label">Преподаватель</label>
+                                <input type="text" class="form-control" id="orderTeacherName" readonly>
+                                <input type="hidden" id="orderTutorId">
+                            </div>
+
+                            <!-- Дата начала -->
+                            <div class="col-md-6">
+                                <label for="orderDateStart" class="form-label">Дата начала курса</label>
+                                <select class="form-select" id="orderDateStart" required>
+                                    <option value="">Выберите дату...</option>
+                                </select>
+                            </div>
+
+                            <!-- Время -->
+                            <div class="col-md-6">
+                                <label for="orderTimeStart" class="form-label">Время занятий</label>
+                                <select class="form-select" id="orderTimeStart" required>
+                                    <option value="">Выберите время...</option>
+                                </select>
+                            </div>
+
+                            <!-- Информация о курсе -->
+                            <div class="col-md-6">
+                                <label for="orderDuration" class="form-label">Длительность курса</label>
+                                <input type="text" class="form-control" id="orderDuration" readonly>
+                                <input type="hidden" id="orderWeekLength">
+                                <input type="hidden" id="orderTotalLength">
+                                <input type="hidden" id="orderCourseFee">
+                            </div>
+
+                            <!-- Количество студентов -->
+                            <div class="col-md-6">
+                                <label for="orderPersons" class="form-label">Количество студентов</label>
+                                <input type="number" class="form-control" id="orderPersons" min="1" max="20" value="1" required>
+                            </div>
+
+                            <!-- Дополнительные опции -->
+                            <div class="col-12">
+                                <label class="form-label">Дополнительные опции</label>
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="optionEarlyReg" disabled>
+                                            <label class="form-check-label" for="optionEarlyReg">Ранняя регистрация (-10%)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="optionGroupEnroll" disabled>
+                                            <label class="form-check-label" for="optionGroupEnroll">Групповая запись (-15%)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="optionIntensive" disabled>
+                                            <label class="form-check-label" for="optionIntensive">Интенсивный курс (+20%)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="optionSupplementary">
+                                            <label class="form-check-label" for="optionSupplementary">Доп. материалы (+2000₽/чел.)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="optionPersonalized">
+                                            <label class="form-check-label" for="optionPersonalized">Индивид. занятия (+1500₽/нед.)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="optionExcursions">
+                                            <label class="form-check-label" for="optionExcursions">Экскурсии (+25%)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="optionAssessment">
+                                            <label class="form-check-label" for="optionAssessment">Оценка уровня (+300₽)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="optionInteractive">
+                                            <label class="form-check-label" for="optionInteractive">Интерактив. платформа (+50%)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Стоимость -->
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold">Общая стоимость:</span>
+                                        <span class="fs-4 fw-bold" id="orderPrice">0 ₽</span>
+                                        <input type="hidden" id="orderPriceValue">
+                                    </div>
+                                    <small id="priceBreakdown" class="text-muted d-block mt-2"></small>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="button" class="btn btn-primary" id="loginBtn">Вход</button>
+                    <button type="button" class="btn btn-primary" id="submitOrder">Оформить заявку</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-auto">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-3 mb-md-0">
-                    <h5><i class="bi bi-translate me-2"></i>LinguaSchool</h5>
-                    <p class="text-muted small">Ваш партнер в изучении языков.</p>
+    <!-- Модальное окно заявки на репетитора -->
+    <div class="modal fade" id="tutorOrderModal" tabindex="-1" aria-labelledby="tutorOrderModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="tutorOrderModalLabel">Запись к репетитору</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
-                <div class="col-md-4 mb-3 mb-md-0">
-                    <h6>Контакты</h6>
-                    <p class="text-muted small">+7 495 123-45-67</p>
+                <div class="modal-body">
+                    <form id="tutorOrderForm">
+                        <input type="hidden" id="tutorOrderId">
+                        
+                        <div class="row g-3">
+                            <!-- Информация о репетиторе -->
+                            <div class="col-md-6">
+                                <label for="tutorOrderName" class="form-label">Репетитор</label>
+                                <input type="text" class="form-control" id="tutorOrderName" readonly>
+                                <input type="hidden" id="tutorOrderTutorId">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tutorOrderLevel" class="form-label">Уровень</label>
+                                <input type="text" class="form-control" id="tutorOrderLevel" readonly>
+                            </div>
+
+                            <!-- Дата -->
+                            <div class="col-md-6">
+                                <label for="tutorOrderDate" class="form-label">Дата занятия</label>
+                                <input type="date" class="form-control" id="tutorOrderDate" required>
+                            </div>
+
+                            <!-- Время -->
+                            <div class="col-md-6">
+                                <label for="tutorOrderTime" class="form-label">Время занятия</label>
+                                <select class="form-select" id="tutorOrderTime" required>
+                                    <option value="">Выберите время...</option>
+                                    <option value="09:00">09:00</option>
+                                    <option value="10:00">10:00</option>
+                                    <option value="11:00">11:00</option>
+                                    <option value="12:00">12:00</option>
+                                    <option value="13:00">13:00</option>
+                                    <option value="14:00">14:00</option>
+                                    <option value="15:00">15:00</option>
+                                    <option value="16:00">16:00</option>
+                                    <option value="17:00">17:00</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="19:00">19:00</option>
+                                    <option value="20:00">20:00</option>
+                                </select>
+                            </div>
+
+                            <!-- Продолжительность -->
+                            <div class="col-md-6">
+                                <label for="tutorOrderDuration" class="form-label">Продолжительность (часов)</label>
+                                <input type="number" class="form-control" id="tutorOrderDuration" min="1" max="4" value="1" required>
+                                <input type="hidden" id="tutorOrderFee">
+                            </div>
+
+                            <!-- Количество студентов -->
+                            <div class="col-md-6">
+                                <label for="tutorOrderPersons" class="form-label">Количество студентов</label>
+                                <input type="number" class="form-control" id="tutorOrderPersons" min="1" max="10" value="1" required>
+                            </div>
+
+                            <!-- Дополнительные опции -->
+                            <div class="col-12">
+                                <label class="form-label">Дополнительные опции</label>
+                                <div class="row g-2">
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="tutorOptEarlyReg" disabled>
+                                            <label class="form-check-label" for="tutorOptEarlyReg">Ранняя регистрация (-10%)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="tutorOptGroupEnroll" disabled>
+                                            <label class="form-check-label" for="tutorOptGroupEnroll">Групповая запись (-15%)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="tutorOptIntensive" disabled>
+                                            <label class="form-check-label" for="tutorOptIntensive">Интенсивный курс (+20%)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="tutorOptSupplementary">
+                                            <label class="form-check-label" for="tutorOptSupplementary">Доп. материалы (+2000₽/чел.)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="tutorOptPersonalized">
+                                            <label class="form-check-label" for="tutorOptPersonalized">Индивид. занятия (+1500₽/нед.)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="tutorOptExcursions">
+                                            <label class="form-check-label" for="tutorOptExcursions">Экскурсии (+25%)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="tutorOptAssessment">
+                                            <label class="form-check-label" for="tutorOptAssessment">Оценка уровня (+300₽)</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="tutorOptInteractive">
+                                            <label class="form-check-label" for="tutorOptInteractive">Интерактив. платформа (+50%)</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Стоимость -->
+                            <div class="col-12">
+                                <div class="alert alert-success">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold">Общая стоимость:</span>
+                                        <span class="fs-4 fw-bold" id="tutorOrderPrice">0 ₽</span>
+                                        <input type="hidden" id="tutorOrderPriceValue">
+                                    </div>
+                                    <small id="tutorPriceBreakdown" class="text-muted d-block mt-2"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="col-md-4">
-                    <h6>Соцсети</h6>
-                    <a href="#" class="text-white me-3 fs-4"><i class="bi bi-telegram"></i></a>
-                    <a href="#" class="text-white me-3 fs-4"><i class="bi bi-vk"></i></a>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-success" id="submitTutorOrder">Записаться</button>
                 </div>
             </div>
-            <hr class="my-3">
-            <p class="text-center text-muted small mb-0">© 2025 LinguaSchool. Все права защищены.</p>
         </div>
-    </footer>
+    </div>
+
+    <!-- Модальное окно авторизации -->
+    <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="authModalLabel">Вход в систему</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="authForm">
+                        <div class="mb-3">
+                            <label for="apiKeyInput" class="form-label">API ключ</label>
+                            <input type="text" class="form-control" id="apiKeyInput" 
+                                   placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" 
+                                   pattern="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}"
+                                   required>
+                            <div class="form-text">
+                                Введите ваш персональный API ключ (UUIDv4), полученный по ссылке в СДО Московского Политеха.
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" id="loginBtn">Войти</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=185a95cf-8387-4471-8a97-ab0e54897852&lang=ru_RU"></script>
     <script src="scripts/api.js"></script>
     <script src="scripts/price.js"></script>
     <script src="scripts/app.js"></script>
