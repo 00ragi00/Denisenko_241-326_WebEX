@@ -420,49 +420,422 @@ function displayYandexResults(places) {
     })
 }
 
-// ===== Функции рендеринга  =====
+// ===== Рендеринг курсов =====
 function renderCourses() {
-    console.log("renderCourses")
+    const searchText = document.getElementById("searchCourse").value.toLowerCase()
+    const filterLevel = document.getElementById("filterLevel").value
+
+    let filtered = coursesData.filter(course => {
+        const matchesSearch = !searchText || 
+            course.name.toLowerCase().includes(searchText) ||
+            course.description.toLowerCase().includes(searchText)
+        
+        const matchesLevel = !filterLevel || course.level === filterLevel
+        
+        return matchesSearch && matchesLevel
+    })
+
+    currentCoursePage = 1
+    const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
+    const startIndex = (currentCoursePage - 1) * ITEMS_PER_PAGE
+    const endIndex = startIndex + ITEMS_PER_PAGE
+    const paginated = filtered.slice(startIndex, endIndex)
+
+    const container = document.getElementById("courses-container")
+    if (paginated.length === 0) {
+        container.innerHTML = `
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mt-3">Курсы не найдены</h4>
+            </div>
+        `
+        renderPagination("courses-pagination", 0, 1, () => {})
+        return
+    }
+
+    let html = ""
+    paginated.forEach(course => {
+        const levelBadgeClass = getLevelBadgeClass(course.level)
+        html += `
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card course-card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">${escapeHtml(course.name)}</h5>
+                        <p class="card-text text-muted small">${escapeHtml(course.description.substring(0, 80))}...</p>
+                        <div class="mb-3">
+                            <span class="badge ${levelBadgeClass}">${course.level}</span>
+                        </div>
+                        <p class="card-text"><strong>${course.price} руб./ч</strong></p>
+                        <button class="btn btn-primary w-100" onclick="openCourseOrderModal(${course.id})">
+                            <i class="bi bi-cart me-1"></i> Заказать
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `
+    })
+
+    container.innerHTML = html
+    renderPagination("courses-pagination", totalPages, currentCoursePage, function(page) {
+        currentCoursePage = page
+        renderCourses()
+    })
 }
 
+// ===== Рендеринг репетиторов =====
 function renderTutors() {
-    console.log("renderTutors")
+    const filterLanguage = document.getElementById("filterTutorLanguage").value
+    const filterLevel = document.getElementById("filterTutorLevel").value
+    const filterExperience = Number.parseInt(document.getElementById("filterTutorExperience").value || "0", 10)
+
+    let filtered = tutorsData.filter(tutor => {
+        const matchesLanguage = !filterLanguage || 
+            (tutor.languagesoffered && tutor.languagesoffered.includes(filterLanguage))
+        
+        const matchesLevel = !filterLevel || tutor.level === filterLevel
+        
+        const matchesExperience = tutor.yearsofexperience >= filterExperience
+        
+        return matchesLanguage && matchesLevel && matchesExperience
+    })
+
+    const container = document.getElementById("tutors-container")
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <tr>
+                <td colspan="7" class="text-center py-5 text-muted">
+                    <i class="bi bi-search" style="font-size: 2rem;"></i>
+                    <p class="mt-2 mb-0">Репетиторов не найдено</p>
+                </td>
+            </tr>
+        `
+        return
+    }
+
+    let html = ""
+    filtered.forEach(tutor => {
+        const levelBadgeClass = getLevelBadgeClass(tutor.level)
+        const languagesList = tutor.languagesoffered ? tutor.languagesoffered.join(", ") : "-"
+        
+        html += `
+            <tr class="tutor-row" onclick="selectTutor(${tutor.id})">
+                <td>
+                    <div class="tutor-avatar"><i class="bi bi-person-circle"></i></div>
+                </td>
+                <td class="fw-bold">${escapeHtml(tutor.name)}</td>
+                <td><span class="badge ${levelBadgeClass}">${tutor.level}</span></td>
+                <td class="text-truncate-tooltip" title="${languagesList}">${languagesList}</td>
+                <td>${tutor.yearsofexperience} лет</td>
+                <td class="text-success fw-bold">${tutor.hourlyrate} руб./ч</td>
+                <td>
+                    <button class="btn btn-sm btn-success" onclick="openTutorOrderModal(${tutor.id}, event)">
+                        <i class="bi bi-plus-circle me-1"></i> Занятие
+                    </button>
+                </td>
+            </tr>
+        `
+    })
+
+    container.innerHTML = html
 }
 
-function onDateStartChange() {
-    console.log("onDateStartChange")
+function selectTutor(tutorId) {
+    selectedTutorId = tutorId
+    
+    const rows = document.querySelectorAll(".tutor-row")
+    rows.forEach(row => row.classList.remove("selected"))
+    
+    const selected = document.querySelector(`.tutor-row[onclick="selectTutor(${tutorId})"]`)
+    if (selected) selected.classList.add("selected")
+}
+
+// ===== Обработчики заказов курсов =====
+async function openCourseOrderModal(courseId) {
+    if (!isAuthorized()) {
+        showNotification("Пожалуйста, авторизуйтесь для оформления заявки", "warning")
+        const modal = new bootstrap.Modal(document.getElementById("authModal"))
+        modal.show()
+        return
+    }
+
+    try {
+        const course = await getCourse(courseId)
+        
+        document.getElementById("orderCourseId").value = course.id
+        document.getElementById("orderCourseName").value = course.name
+        document.getElementById("orderTeacherName").value = course.instructorname
+        document.getElementById("orderCourseFee").value = course.price
+        document.getElementById("orderWeekLength").value = course.schedulefrequency
+        document.getElementById("orderTotalLength").value = course.courselength
+
+        const durationDisplay = `${course.courselength} недель по ${course.schedulefrequency} занятиям в неделю`
+        document.getElementById("orderDuration").value = durationDisplay
+
+        populateDateOptions()
+        populateTimeOptions()
+        updateOrderPrice()
+
+        const modal = new bootstrap.Modal(document.getElementById("orderModal"))
+        modal.show()
+    } catch (error) {
+        showNotification(error.message, "danger")
+    }
+}
+
+async function openTutorOrderModal(tutorId, event) {
+    event.stopPropagation()
+
+    if (!isAuthorized()) {
+        showNotification("Пожалуйста, авторизуйтесь для оформления заявки", "warning")
+        const modal = new bootstrap.Modal(document.getElementById("authModal"))
+        modal.show()
+        return
+    }
+
+    try {
+        const tutor = await getTutor(tutorId)
+        
+        document.getElementById("tutorOrderTutorId").value = tutor.id
+        document.getElementById("tutorOrderName").value = tutor.name
+        document.getElementById("tutorOrderLevel").value = tutor.level
+        document.getElementById("tutorOrderFee").value = tutor.hourlyrate
+
+        populateTutorTimeOptions()
+        updateTutorOrderPrice()
+
+        const modal = new bootstrap.Modal(document.getElementById("tutorOrderModal"))
+        modal.show()
+    } catch (error) {
+        showNotification(error.message, "danger")
+    }
 }
 
 function populateDateOptions() {
-    console.log("populateDateOptions")
+    const select = document.getElementById("orderDateStart")
+    select.innerHTML = '<option value="">Выберите дату</option>'
+
+    const today = new Date()
+    for (let i = 0; i < 30; i++) {
+        const date = new Date(today)
+        date.setDate(date.getDate() + i)
+        const dateStr = date.toISOString().split("T")[0]
+        const displayStr = formatDate(date)
+
+        const option = document.createElement("option")
+        option.value = dateStr
+        option.textContent = displayStr
+        select.appendChild(option)
+    }
 }
 
 function populateTimeOptions() {
-    console.log("populateTimeOptions")
+    const select = document.getElementById("orderTimeStart")
+    select.innerHTML = '<option value="">Выберите время</option>'
+
+    const times = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"]
+    times.forEach(time => {
+        const option = document.createElement("option")
+        option.value = time
+        option.textContent = time
+        select.appendChild(option)
+    })
+}
+
+function populateTutorTimeOptions() {
+    const select = document.getElementById("tutorOrderTime")
+    select.innerHTML = '<option value="">Выберите время</option>'
+
+    const times = ["0900", "1000", "1100", "1200", "1300", "1400", "1500", "1600", "1700", "1800", "1900", "2000"]
+    const timeLabels = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"]
+    
+    times.forEach((time, index) => {
+        const option = document.createElement("option")
+        option.value = time
+        option.textContent = timeLabels[index]
+        select.appendChild(option)
+    })
+}
+
+function onDateStartChange() {
+    const dateStr = document.getElementById("orderDateStart").value
+    if (dateStr) {
+        const isWeekend = isWeekendOrHoliday(dateStr)
+        const isEarly = checkEarlyRegistration(dateStr)
+
+        document.getElementById("optionEarlyReg").checked = false
+        document.getElementById("optionEarlyReg").disabled = !isEarly
+
+        updateOrderPrice()
+    }
 }
 
 function updateOrderPrice() {
-    console.log("updateOrderPrice")
+    const dateStr = document.getElementById("orderDateStart").value
+    const timeStr = document.getElementById("orderTimeStart").value
+    const persons = Number.parseInt(document.getElementById("orderPersons").value || "1", 10)
+    const fee = Number.parseInt(document.getElementById("orderCourseFee").value || "100", 10)
+    const weekLength = Number.parseInt(document.getElementById("orderWeekLength").value || "1", 10)
+    const totalLength = Number.parseInt(document.getElementById("orderTotalLength").value || "1", 10)
+
+    const durationHours = totalLength
+
+    const isWeekend = dateStr ? isWeekendOrHoliday(dateStr) : false
+    const isEarly = dateStr ? checkEarlyRegistration(dateStr) : false
+    const isGroup = checkGroupEnrollment(persons)
+    const isIntensive = checkIntensiveCourse(weekLength)
+
+    const supplementary = document.getElementById("optionSupplementary").checked
+    const personalized = document.getElementById("optionPersonalized").checked
+    const excursions = document.getElementById("optionExcursions").checked
+    const assessment = document.getElementById("optionAssessment").checked
+    const interactive = document.getElementById("optionInteractive").checked
+
+    const result = calculatePrice({
+        courseFeePerHour: fee,
+        durationInHours: durationHours,
+        isWeekendOrHoliday: isWeekend,
+        timeStart: timeStr,
+        studentsNumber: persons,
+        earlyRegistration: isEarly,
+        groupEnrollment: isGroup,
+        intensiveCourse: isIntensive,
+        supplementary: supplementary,
+        personalized: personalized,
+        excursions: excursions,
+        assessment: assessment,
+        interactive: interactive,
+        totalWeeks: totalLength
+    })
+
+    document.getElementById("orderPrice").textContent = result.price + " руб."
+    document.getElementById("orderPriceValue").value = result.price
+    document.getElementById("priceBreakdown").innerHTML = result.breakdown.map(item => `<div>${item}</div>`).join("")
+
+    document.getElementById("optionEarlyReg").disabled = !isEarly
+    document.getElementById("optionGroupEnroll").disabled = !isGroup
+    document.getElementById("optionIntensive").disabled = !isIntensive
 }
 
-function submitCourseOrder() {
-    console.log("submitCourseOrder")
+async function submitCourseOrder() {
+    if (!isAuthorized()) {
+        showNotification("Требуется авторизация", "warning")
+        return
+    }
+
+    const courseId = Number.parseInt(document.getElementById("orderCourseId").value, 10)
+    const dateStr = document.getElementById("orderDateStart").value
+    const timeStr = document.getElementById("orderTimeStart").value
+    const persons = Number.parseInt(document.getElementById("orderPersons").value, 10)
+    const price = Number.parseInt(document.getElementById("orderPriceValue").value, 10)
+
+    if (!dateStr || !timeStr || persons < 1) {
+        showNotification("Пожалуйста, заполните все обязательные поля", "warning")
+        return
+    }
+
+    try {
+        const orderData = {
+            courseid: courseId,
+            datetimestart: dateStr + "T" + timeStr,
+            numberofstudents: persons,
+            price: price
+        }
+
+        await createOrder(orderData)
+        showNotification("Заявка успешно отправлена!", "success")
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById("orderModal"))
+        if (modal) modal.hide()
+
+        document.getElementById("orderForm").reset()
+    } catch (error) {
+        showNotification(error.message, "danger")
+    }
 }
 
-function openCourseOrderModal() {
-    console.log("openCourseOrderModal")
-}
-
+// ===== Обработчики заказов репетиторов =====
 function updateTutorOrderPrice() {
-    console.log("updateTutorOrderPrice")
+    const dateStr = document.getElementById("tutorOrderDate").value
+    const timeStr = document.getElementById("tutorOrderTime").value
+    const duration = Number.parseInt(document.getElementById("tutorOrderDuration").value || "1", 10)
+    const persons = Number.parseInt(document.getElementById("tutorOrderPersons").value || "1", 10)
+    const fee = Number.parseInt(document.getElementById("tutorOrderFee").value || "100", 10)
+
+    const isWeekend = dateStr ? isWeekendOrHoliday(dateStr) : false
+    const isEarly = dateStr ? checkEarlyRegistration(dateStr) : false
+    const isGroup = checkGroupEnrollment(persons)
+    const isIntensive = checkIntensiveCourse(1)
+
+    const supplementary = document.getElementById("tutorOptSupplementary").checked
+    const personalized = document.getElementById("tutorOptPersonalized").checked
+    const excursions = document.getElementById("tutorOptExcursions").checked
+    const assessment = document.getElementById("tutorOptAssessment").checked
+    const interactive = document.getElementById("tutorOptInteractive").checked
+
+    const result = calculatePrice({
+        courseFeePerHour: fee,
+        durationInHours: duration,
+        isWeekendOrHoliday: isWeekend,
+        timeStart: timeStr ? (timeStr.substring(0, 2) + ":" + timeStr.substring(2, 4)) : "09:00",
+        studentsNumber: persons,
+        earlyRegistration: isEarly,
+        groupEnrollment: isGroup,
+        intensiveCourse: isIntensive,
+        supplementary: supplementary,
+        personalized: personalized,
+        excursions: excursions,
+        assessment: assessment,
+        interactive: interactive,
+        totalWeeks: 1
+    })
+
+    document.getElementById("tutorOrderPrice").textContent = result.price + " руб."
+    document.getElementById("tutorOrderPriceValue").value = result.price
+    document.getElementById("tutorPriceBreakdown").innerHTML = result.breakdown.map(item => `<div>${item}</div>`).join("")
+
+    document.getElementById("tutorOptEarlyReg").disabled = !isEarly
+    document.getElementById("tutorOptGroupEnroll").disabled = !isGroup
+    document.getElementById("tutorOptIntensive").disabled = !isIntensive
 }
 
-function submitTutorOrder() {
-    console.log("submitTutorOrder")
-}
+async function submitTutorOrder() {
+    if (!isAuthorized()) {
+        showNotification("Требуется авторизация", "warning")
+        return
+    }
 
-function openTutorOrderModal() {
-    console.log("openTutorOrderModal")
+    const tutorId = Number.parseInt(document.getElementById("tutorOrderTutorId").value, 10)
+    const dateStr = document.getElementById("tutorOrderDate").value
+    const timeStr = document.getElementById("tutorOrderTime").value
+    const duration = Number.parseInt(document.getElementById("tutorOrderDuration").value, 10)
+    const persons = Number.parseInt(document.getElementById("tutorOrderPersons").value, 10)
+    const price = Number.parseInt(document.getElementById("tutorOrderPriceValue").value, 10)
+
+    if (!dateStr || !timeStr || duration < 1 || persons < 1) {
+        showNotification("Пожалуйста, заполните все обязательные поля", "warning")
+        return
+    }
+
+    try {
+        const timeHHMM = timeStr.substring(0, 2) + ":" + timeStr.substring(2, 4)
+        const orderData = {
+            tutorid: tutorId,
+            datetimestart: dateStr + "T" + timeHHMM,
+            durationhours: duration,
+            numberofstudents: persons,
+            price: price
+        }
+
+        await createOrder(orderData)
+        showNotification("Заявка успешно отправлена!", "success")
+
+        const modal = bootstrap.Modal.getInstance(document.getElementById("tutorOrderModal"))
+        if (modal) modal.hide()
+
+        document.getElementById("tutorOrderForm").reset()
+    } catch (error) {
+        showNotification(error.message, "danger")
+    }
 }
 
 // ===== Инициализация страницы аккаунта =====
@@ -585,7 +958,6 @@ function escapeHtml(text) {
     return div.innerHTML
 }
 
-// Debounce функция
 function debounce(func, wait) {
     let timeout
     return function executedFunction(...args) {
