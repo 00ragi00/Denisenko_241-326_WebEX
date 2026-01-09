@@ -1,4 +1,4 @@
-/* LinguaSchool - Стили */
+/* Кастомные стили для LinguaSchool */
 
 /* Общие стили */
 body {
@@ -194,4 +194,17 @@ main {
   #yandex-map {
     height: 350px !important;
   }
+}
+
+/* цвет футера */
+footer.bg-dark .text-muted {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+footer.bg-dark a.text-muted {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+footer.bg-dark a.text-muted:hover {
+  color: rgba(255, 255, 255, 0.9) !important;
 }

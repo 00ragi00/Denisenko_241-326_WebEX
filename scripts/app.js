@@ -257,7 +257,9 @@ function setupMainPageHandlers() {
   // Форма заказа курса
   document.getElementById("orderDateStart").addEventListener("change", onDateStartChange)
   document.getElementById("orderTimeStart").addEventListener("change", updateOrderPrice)
-  document.getElementById("orderPersons").addEventListener("input", updateOrderPrice)
+  document
+    .getElementById("orderPersons")
+    .addEventListener("input", updateOrderPrice)
 
   // Опции формы заказа курса
   ;["optionSupplementary", "optionPersonalized", "optionExcursions", "optionAssessment", "optionInteractive"].forEach(
@@ -273,7 +275,9 @@ function setupMainPageHandlers() {
   document.getElementById("tutorOrderDate").addEventListener("change", updateTutorOrderPrice)
   document.getElementById("tutorOrderTime").addEventListener("change", updateTutorOrderPrice)
   document.getElementById("tutorOrderDuration").addEventListener("input", updateTutorOrderPrice)
-  document.getElementById("tutorOrderPersons").addEventListener("input", updateTutorOrderPrice)
+  document
+    .getElementById("tutorOrderPersons")
+    .addEventListener("input", updateTutorOrderPrice)
 
   // Опции формы заказа репетитора
   ;[
@@ -350,7 +354,7 @@ function initYandexMap() {
     // Выполняем начальный поиск
     const mapSearchQuery = document.getElementById("mapSearchQuery")
     if (mapSearchQuery && !mapSearchQuery.value.trim()) {
-    mapSearchQuery.value = "Москва"
+      mapSearchQuery.value = "Москва"
     }
     searchOnMap()
   })
@@ -642,26 +646,31 @@ function renderTutors() {
   if (filteredTutors.length === 0) {
     container.innerHTML = `
             <tr>
-                <td colspan="7" class="text-center py-4">
-                    <i class="bi bi-search text-muted" style="font-size: 2rem;"></i>
-                    <p class="text-muted mt-2 mb-0">Репетиторы не найдены</p>
+                <td colspan="7" class="text-center py-5">
+                    <i class="bi bi-search text-muted" style="font-size: 3rem;"></i>
+                    <p class="text-muted mt-3">Репетиторы не найдены</p>
                 </td>
             </tr>
         `
   } else {
     container.innerHTML = filteredTutors.map((tutor) => createTutorRow(tutor)).join("")
 
-    // Добавляем обработчики на строки и кнопки
+    // Добавляем обработчики
     container.querySelectorAll(".tutor-row").forEach((row) => {
       row.addEventListener("click", (e) => {
-        if (!e.target.closest(".btn-select-tutor")) {
-          selectTutor(Number.parseInt(row.dataset.tutorId))
-        }
+        // Игнорируем клики на кнопках
+        if (e.target.closest("button")) return
+
+        const tutorId = Number.parseInt(row.dataset.tutorId)
+        selectTutor(tutorId)
       })
     })
 
-    container.querySelectorAll(".btn-select-tutor").forEach((btn) => {
-      btn.addEventListener("click", () => openTutorOrderModal(Number.parseInt(btn.dataset.tutorId)))
+    container.querySelectorAll(".btn-tutor-order").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation()
+        openTutorOrderModal(Number.parseInt(btn.dataset.tutorId))
+      })
     })
   }
 }
@@ -671,11 +680,11 @@ function renderTutors() {
  */
 function createTutorRow(tutor) {
   const levelBadgeClass = getLevelBadgeClass(tutor.language_level)
-  const languages = tutor.languages_spoken ? tutor.languages_spoken.join(", ") : "-"
+  const languages = tutor.languages_offered ? tutor.languages_offered.join(", ") : "-"
   const isSelected = selectedTutorId === tutor.id
 
   return `
-        <tr class="tutor-row ${isSelected ? "selected" : ""}" data-tutor-id="${tutor.id}" style="cursor: pointer;">
+        <tr class="tutor-row ${isSelected ? "selected" : ""}" data-tutor-id="${tutor.id}">
             <td>
                 <div class="tutor-avatar">
                     <i class="bi bi-person-fill"></i>
@@ -683,12 +692,12 @@ function createTutorRow(tutor) {
             </td>
             <td><strong>${escapeHtml(tutor.name)}</strong></td>
             <td><span class="badge ${levelBadgeClass}">${tutor.language_level}</span></td>
-            <td class="text-truncate-tooltip" data-bs-toggle="tooltip" title="${escapeHtml(languages)}">${escapeHtml(languages)}</td>
+            <td>${escapeHtml(languages)}</td>
             <td>${tutor.work_experience} лет</td>
-            <td><strong>${tutor.price_per_hour} ₽</strong></td>
+            <td>${tutor.price_per_hour} ₽</td>
             <td>
-                <button class="btn btn-sm btn-outline-primary btn-select-tutor" data-tutor-id="${tutor.id}">
-                    <i class="bi bi-check2-circle me-1"></i>Выбрать
+                <button class="btn btn-sm btn-primary btn-tutor-order" data-tutor-id="${tutor.id}">
+                    <i class="bi bi-calendar-plus me-1"></i>Записаться
                 </button>
             </td>
         </tr>
@@ -696,14 +705,14 @@ function createTutorRow(tutor) {
 }
 
 /**
- * Выбор репетитора (подсветка строки)
+ * Выбор репетитора
  */
 function selectTutor(tutorId) {
   selectedTutorId = tutorId
   renderTutors()
 }
 
-// === Модальные окна и заказы ===
+// === Модальные окна заказов ===
 
 /**
  * Открытие модального окна заказа курса
@@ -719,8 +728,13 @@ function openCourseOrderModal(courseId) {
   document.getElementById("orderDuration").value = `${course.total_length} нед. (${course.week_length} ч/нед.)`
   document.getElementById("orderWeekLength").value = course.week_length
   document.getElementById("orderTotalLength").value = course.total_length
-  document.getElementById("orderCourseFee").value = course.course_fee_per_hour
   document.getElementById("orderPersons").value = 1
+
+  // Заполняем даты
+  populateDateOptions()
+
+  // Заполняем время
+  populateTimeOptions()
 
   // Сбрасываем опции
   document.getElementById("optionSupplementary").checked = false
@@ -728,9 +742,6 @@ function openCourseOrderModal(courseId) {
   document.getElementById("optionExcursions").checked = false
   document.getElementById("optionAssessment").checked = false
   document.getElementById("optionInteractive").checked = false
-
-  // Генерируем даты начала (следующие 30 дней, начиная с понедельников)
-  populateDateOptions()
 
   // Обновляем цену
   updateOrderPrice()
@@ -741,60 +752,36 @@ function openCourseOrderModal(courseId) {
 }
 
 /**
- * Заполнение опций выбора даты
+ * Заполнение списка дат
  */
 function populateDateOptions() {
   const dateSelect = document.getElementById("orderDateStart")
   dateSelect.innerHTML = '<option value="">Выберите дату...</option>'
 
+  // Генерируем даты на ближайшие 90 дней
   const today = new Date()
-  const dates = []
-
-  // Генерируем даты на 60 дней вперёд
-  for (let i = 1; i <= 60; i++) {
+  for (let i = 1; i <= 90; i++) {
     const date = new Date(today)
     date.setDate(today.getDate() + i)
 
-    // Только понедельники (для начала курса)
-    if (date.getDay() === 1) {
-      dates.push(date)
-    }
-  }
-
-  dates.forEach((date) => {
     const option = document.createElement("option")
     option.value = date.toISOString().split("T")[0]
     option.textContent = formatDate(date)
     dateSelect.appendChild(option)
-  })
+  }
 }
 
 /**
- * Обработчик изменения даты начала
+ * Обработчик изменения даты
  */
 function onDateStartChange() {
-  const dateStart = document.getElementById("orderDateStart").value
-
-  // Проверяем раннюю регистрацию
-  const earlyRegCheckbox = document.getElementById("optionEarlyReg")
-  if (dateStart && checkEarlyRegistration(dateStart)) {
-    earlyRegCheckbox.checked = true
-    earlyRegCheckbox.disabled = true
-  } else {
-    earlyRegCheckbox.checked = false
-    earlyRegCheckbox.disabled = true
-  }
-
-  // Заполняем доступное время
-  populateTimeOptions(dateStart)
-
   updateOrderPrice()
 }
 
 /**
- * Заполнение опций выбора времени
+ * Заполнение списка времени
  */
-function populateTimeOptions(dateStr) {
+function populateTimeOptions() {
   const timeSelect = document.getElementById("orderTimeStart")
   timeSelect.innerHTML = '<option value="">Выберите время...</option>'
 
@@ -895,6 +882,8 @@ async function submitCourseOrder() {
   const persons = document.getElementById("orderPersons").value
   const price = document.getElementById("orderPriceValue").value
 
+  const course = coursesData.find((c) => c.id === Number.parseInt(courseId))
+
   if (!dateStart || !timeStart) {
     showNotification("Заполните все обязательные поля", "warning")
     return
@@ -915,6 +904,7 @@ async function submitCourseOrder() {
     course_id: Number.parseInt(courseId),
     date_start: dateStart,
     time_start: timeStart,
+    duration: course ? course.week_length * course.total_length : 1,
     persons: Number.parseInt(persons),
     price: Number.parseInt(price),
     options: options.join(","),
@@ -1197,62 +1187,39 @@ async function viewOrderDetails(orderId) {
 
     let detailsHtml = `
             <dl class="row mb-0">
-                <dt class="col-sm-4">ID заявки</dt>
+                <dt class="col-sm-4">ID заявки:</dt>
                 <dd class="col-sm-8">${order.id}</dd>
-        `
-
-    if (order.course_id) {
-      detailsHtml += `
-                <dt class="col-sm-4">Тип</dt>
-                <dd class="col-sm-8">Курс</dd>
-                <dt class="col-sm-4">ID курса</dt>
-                <dd class="col-sm-8">${order.course_id}</dd>
-            `
-    } else if (order.tutor_id) {
-      detailsHtml += `
-                <dt class="col-sm-4">Тип</dt>
-                <dd class="col-sm-8">Репетитор</dd>
-                <dt class="col-sm-4">ID репетитора</dt>
-                <dd class="col-sm-8">${order.tutor_id}</dd>
-            `
-    }
-
-    detailsHtml += `
-                <dt class="col-sm-4">Дата начала</dt>
+                
+                <dt class="col-sm-4">Тип:</dt>
+                <dd class="col-sm-8">${order.course_id ? "Курс" : "Репетитор"}</dd>
+                
+                <dt class="col-sm-4">${order.course_id ? "ID курса" : "ID репетитора"}:</dt>
+                <dd class="col-sm-8">${order.course_id || order.tutor_id}</dd>
+                
+                <dt class="col-sm-4">Дата начала:</dt>
                 <dd class="col-sm-8">${order.date_start ? formatDate(new Date(order.date_start)) : "-"}</dd>
-                <dt class="col-sm-4">Время</dt>
+                
+                <dt class="col-sm-4">Время:</dt>
                 <dd class="col-sm-8">${order.time_start || "-"}</dd>
-                <dt class="col-sm-4">Количество студентов</dt>
+                
+                <dt class="col-sm-4">Продолжительность:</dt>
+                <dd class="col-sm-8">${order.duration || "-"} ч.</dd>
+                
+                <dt class="col-sm-4">Кол-во студентов:</dt>
                 <dd class="col-sm-8">${order.persons || 1}</dd>
-                <dt class="col-sm-4">Стоимость</dt>
+                
+                <dt class="col-sm-4">Стоимость:</dt>
                 <dd class="col-sm-8">${order.price ? order.price.toLocaleString("ru-RU") + " ₽" : "-"}</dd>
-            </dl>
         `
 
     if (order.options) {
-      const optionLabels = {
-        earlyRegistration: "Ранняя регистрация",
-        groupEnrollment: "Групповая запись",
-        intensiveCourse: "Интенсивный курс",
-        supplementary: "Доп. материалы",
-        personalized: "Индивид. занятия",
-        excursions: "Экскурсии",
-        assessment: "Оценка уровня",
-        interactive: "Интерактив. платформа",
-      }
-
-      const optionsList = order.options
-        .split(",")
-        .filter((o) => o)
-        .map((o) => optionLabels[o] || o)
-        .join(", ")
-      if (optionsList) {
-        detailsHtml += `
-                    <hr>
-                    <p class="mb-0"><strong>Опции:</strong> ${optionsList}</p>
-                `
-      }
+      detailsHtml += `
+                <dt class="col-sm-4">Опции:</dt>
+                <dd class="col-sm-8">${formatOptions(order.options)}</dd>
+            `
     }
+
+    detailsHtml += `</dl>`
 
     content.innerHTML = detailsHtml
 
@@ -1264,53 +1231,96 @@ async function viewOrderDetails(orderId) {
 }
 
 /**
+ * Форматирование опций заказа
+ */
+function formatOptions(optionsStr) {
+  const optionLabels = {
+    earlyRegistration: '<span class="discount-badge">Ранняя регистрация -10%</span>',
+    groupEnrollment: '<span class="discount-badge">Групповая запись -15%</span>',
+    intensiveCourse: '<span class="surcharge-badge">Интенсивный курс +20%</span>',
+    supplementary: '<span class="surcharge-badge">Доп. материалы</span>',
+    personalized: '<span class="surcharge-badge">Индивид. занятия</span>',
+    excursions: '<span class="surcharge-badge">Экскурсии +25%</span>',
+    assessment: '<span class="surcharge-badge">Оценка уровня</span>',
+    interactive: '<span class="surcharge-badge">Интерактив. платформа +50%</span>',
+  }
+
+  if (!optionsStr) return "-"
+
+  return optionsStr
+    .split(",")
+    .map((opt) => optionLabels[opt.trim()] || opt)
+    .join(" ")
+}
+
+/**
+ * Установка обработчиков страницы личного кабинета
+ */
+function setupAccountPageHandlers() {
+  // Подтверждение удаления
+  const confirmDeleteBtn = document.getElementById("confirmDeleteOrder")
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", executeDeleteOrder)
+  }
+
+  // Сохранение изменений
+  const saveEditBtn = document.getElementById("saveEditOrder")
+  if (saveEditBtn) {
+    saveEditBtn.addEventListener("click", saveOrderChanges)
+  }
+}
+
+/**
+ * Подтверждение удаления заявки
+ */
+function confirmDeleteOrder(orderId) {
+  document.getElementById("deleteOrderId").value = orderId
+  const modal = new bootstrap.Modal(document.getElementById("deleteOrderModal"))
+  modal.show()
+}
+
+/**
+ * Выполнение удаления заявки
+ */
+async function executeDeleteOrder() {
+  const orderId = document.getElementById("deleteOrderId").value
+
+  try {
+    await deleteOrder(orderId)
+    showNotification("Заявка удалена", "success")
+
+    // Закрываем модальное окно
+    const modal = bootstrap.Modal.getInstance(document.getElementById("deleteOrderModal"))
+    modal.hide()
+
+    // Перезагружаем список
+    await loadOrders()
+  } catch (error) {
+    showNotification("Ошибка удаления: " + error.message, "danger")
+  }
+}
+
+/**
  * Открытие модального окна редактирования заявки
  */
 async function openEditOrderModal(orderId) {
   try {
     const order = await getOrder(orderId)
 
+    // Определяем тип заказа
+    const isCourse = !!order.course_id
+
+    // Заполняем скрытые поля
     document.getElementById("editOrderId").value = order.id
+    document.getElementById("editOrderType").value = isCourse ? "course" : "tutor"
+    document.getElementById("editCourseId").value = order.course_id || ""
+    document.getElementById("editTutorId").value = order.tutor_id || ""
 
-    if (order.course_id) {
-      document.getElementById("editOrderType").value = "course"
-      document.getElementById("editCourseId").value = order.course_id
-      document.getElementById("editTutorId").value = ""
-      document.getElementById("editOrderName").value = `Курс #${order.course_id}`
-
-      // Получаем информацию о курсе
-      try {
-        const course = await getCourse(order.course_id)
-        document.getElementById("editOrderName").value = course.name
-        document.getElementById("editOrderTeacher").value = course.teacher
-        document.getElementById("editDuration").value = `${course.total_length} нед. (${course.week_length} ч/нед.)`
-        document.getElementById("editDurationHours").value = course.week_length * course.total_length
-        document.getElementById("editWeekLength").value = course.week_length
-        document.getElementById("editTotalLength").value = course.total_length
-      } catch (e) {
-        document.getElementById("editOrderTeacher").value = "-"
-        document.getElementById("editDuration").value = "-"
-      }
-    } else if (order.tutor_id) {
-      document.getElementById("editOrderType").value = "tutor"
-      document.getElementById("editCourseId").value = ""
-      document.getElementById("editTutorId").value = order.tutor_id
-      document.getElementById("editOrderName").value = `Репетитор #${order.tutor_id}`
-
-      // Получаем информацию о репетиторе
-      try {
-        const tutor = await getTutor(order.tutor_id)
-        document.getElementById("editOrderName").value = tutor.name
-        document.getElementById("editOrderTeacher").value = tutor.language_level
-        document.getElementById("editDuration").value = `${order.duration || 1} ч`
-        document.getElementById("editDurationHours").value = order.duration || 1
-      } catch (e) {
-        document.getElementById("editOrderTeacher").value = "-"
-        document.getElementById("editDuration").value = "-"
-      }
-    }
-
-    document.getElementById("editPersons").value = order.persons || 1
+    // Заполняем видимые поля
+    document.getElementById("editOrderName").value = isCourse
+      ? `Курс #${order.course_id}`
+      : `Репетитор #${order.tutor_id}`
+    document.getElementById("editOrderTeacher").value = "-"
 
     // Заполняем даты
     populateEditDateOptions(order.date_start)
@@ -1318,7 +1328,14 @@ async function openEditOrderModal(orderId) {
     // Заполняем время
     populateEditTimeOptions(order.time_start)
 
-    // Устанавливаем опции
+    // Продолжительность
+    document.getElementById("editDuration").value = order.duration ? `${order.duration} ч.` : "-"
+    document.getElementById("editDurationHours").value = order.duration || 1
+
+    // Студенты
+    document.getElementById("editPersons").value = order.persons || 1
+
+    // Опции
     const options = order.options ? order.options.split(",") : []
     document.getElementById("editOptEarlyReg").checked = options.includes("earlyRegistration")
     document.getElementById("editOptGroupEnroll").checked = options.includes("groupEnrollment")
@@ -1329,8 +1346,14 @@ async function openEditOrderModal(orderId) {
     document.getElementById("editOptAssessment").checked = options.includes("assessment")
     document.getElementById("editOptInteractive").checked = options.includes("interactive")
 
-    // Обновляем цену
-    updateEditOrderPrice()
+    // Стоимость
+    document.getElementById("editOrderPrice").textContent = order.price
+      ? `${order.price.toLocaleString("ru-RU")} ₽`
+      : "0 ₽"
+    document.getElementById("editOrderPriceValue").value = order.price || 0
+
+    // Добавляем обработчики для пересчёта цены
+    setupEditFormHandlers()
 
     const modal = new bootstrap.Modal(document.getElementById("editOrderModal"))
     modal.show()
@@ -1340,49 +1363,32 @@ async function openEditOrderModal(orderId) {
 }
 
 /**
- * Заполнение опций выбора даты для редактирования
+ * Заполнение списка дат в форме редактирования
  */
 function populateEditDateOptions(selectedDate) {
   const dateSelect = document.getElementById("editDateStart")
   dateSelect.innerHTML = '<option value="">Выберите дату...</option>'
 
   const today = new Date()
-  const dates = []
-
-  // Генерируем даты на 60 дней вперёд
-  for (let i = 1; i <= 60; i++) {
+  for (let i = 1; i <= 90; i++) {
     const date = new Date(today)
     date.setDate(today.getDate() + i)
 
-    // Только понедельники
-    if (date.getDay() === 1) {
-      dates.push(date)
-    }
-  }
-
-  dates.forEach((date) => {
     const option = document.createElement("option")
-    const dateStr = date.toISOString().split("T")[0]
-    option.value = dateStr
+    const dateValue = date.toISOString().split("T")[0]
+    option.value = dateValue
     option.textContent = formatDate(date)
-    if (selectedDate && dateStr === selectedDate) {
+
+    if (selectedDate && dateValue === selectedDate.split("T")[0]) {
       option.selected = true
     }
-    dateSelect.appendChild(option)
-  })
 
-  // Если выбранная дата не в списке, добавляем её
-  if (selectedDate && !dates.find((d) => d.toISOString().split("T")[0] === selectedDate)) {
-    const option = document.createElement("option")
-    option.value = selectedDate
-    option.textContent = formatDate(new Date(selectedDate))
-    option.selected = true
-    dateSelect.insertBefore(option, dateSelect.options[1])
+    dateSelect.appendChild(option)
   }
 }
 
 /**
- * Заполнение опций выбора времени для редактирования
+ * Заполнение списка времени в форме редактирования
  */
 function populateEditTimeOptions(selectedTime) {
   const timeSelect = document.getElementById("editTimeStart")
@@ -1407,65 +1413,81 @@ function populateEditTimeOptions(selectedTime) {
     const option = document.createElement("option")
     option.value = time
     option.textContent = time
+
     if (selectedTime && time === selectedTime) {
       option.selected = true
     }
+
     timeSelect.appendChild(option)
   })
 }
 
 /**
- * Обновление цены при редактировании заказа
+ * Настройка обработчиков формы редактирования
+ */
+function setupEditFormHandlers() {
+  const elements = [
+    "editDateStart",
+    "editTimeStart",
+    "editPersons",
+    "editOptSupplementary",
+    "editOptPersonalized",
+    "editOptExcursions",
+    "editOptAssessment",
+    "editOptInteractive",
+  ]
+
+  elements.forEach((id) => {
+    const el = document.getElementById(id)
+    if (el) {
+      el.removeEventListener("change", updateEditOrderPrice)
+      el.addEventListener("change", updateEditOrderPrice)
+    }
+  })
+}
+
+/**
+ * Обновление цены в форме редактирования
  */
 function updateEditOrderPrice() {
   const dateStart = document.getElementById("editDateStart").value
   const timeStart = document.getElementById("editTimeStart").value
   const persons = Number.parseInt(document.getElementById("editPersons").value) || 1
-  const durationHours = Number.parseInt(document.getElementById("editDurationHours").value) || 1
-  const weekLength = Number.parseInt(document.getElementById("editWeekLength").value) || 1
-  const totalLength = Number.parseInt(document.getElementById("editTotalLength").value) || 1
+  const duration = Number.parseInt(document.getElementById("editDurationHours").value) || 1
 
-  // Базовая ставка (примерная, если не знаем точную)
-  const orderType = document.getElementById("editOrderType").value
-  const baseFee = 200 // Примерная базовая ставка
+  // Базовая цена (приблизительно)
+  const baseFee = 200
 
-  // Проверяем автоматические условия
   const isWeekend = dateStart ? isWeekendOrHoliday(dateStart) : false
   const earlyRegistration = dateStart ? checkEarlyRegistration(dateStart) : false
   const groupEnrollment = checkGroupEnrollment(persons)
-  const intensiveCourse = orderType === "course" ? checkIntensiveCourse(weekLength) : false
 
-  // Обновляем чекбоксы
   document.getElementById("editOptEarlyReg").checked = earlyRegistration
   document.getElementById("editOptGroupEnroll").checked = groupEnrollment
-  document.getElementById("editOptIntensive").checked = intensiveCourse
 
-  // Получаем дополнительные опции
   const supplementary = document.getElementById("editOptSupplementary").checked
   const personalized = document.getElementById("editOptPersonalized").checked
   const excursions = document.getElementById("editOptExcursions").checked
   const assessment = document.getElementById("editOptAssessment").checked
   const interactive = document.getElementById("editOptInteractive").checked
 
-  // Рассчитываем цену
   const result = calculatePrice({
     courseFeePerHour: baseFee,
-    durationInHours: durationHours,
+    durationInHours: duration,
     isWeekendOrHoliday: isWeekend,
     timeStart: timeStart || "12:00",
     studentsNumber: persons,
     earlyRegistration: earlyRegistration,
     groupEnrollment: groupEnrollment,
-    intensiveCourse: intensiveCourse,
+    intensiveCourse: false,
     supplementary: supplementary,
     personalized: personalized,
     excursions: excursions,
     assessment: assessment,
     interactive: interactive,
-    totalWeeks: totalLength,
+    totalWeeks: 1,
   })
 
-  // Обновляем отображение
   document.getElementById("editOrderPrice").textContent = `${result.price.toLocaleString("ru-RU")} ₽`
   document.getElementById("editOrderPriceValue").value = result.price
   document.getElementById("editPriceBreakdown").innerHTML = result.breakdown.join("<br>")
@@ -1474,12 +1496,14 @@ function updateEditOrderPrice() {
 /**
  * Сохранение изменений заявки
  */
-async function saveEditOrder() {
+async function saveOrderChanges() {
   const orderId = document.getElementById("editOrderId").value
+  const orderType = document.getElementById("editOrderType").value
   const dateStart = document.getElementById("editDateStart").value
   const timeStart = document.getElementById("editTimeStart").value
   const persons = document.getElementById("editPersons").value
   const price = document.getElementById("editOrderPriceValue").value
+  const duration = document.getElementById("editDurationHours").value
 
   if (!dateStart || !timeStart) {
     showNotification("Заполните все обязательные поля", "warning")
@@ -1500,183 +1524,35 @@ async function saveEditOrder() {
   const orderData = {
     date_start: dateStart,
     time_start: timeStart,
+    duration: Number.parseInt(duration),
     persons: Number.parseInt(persons),
     price: Number.parseInt(price),
     options: options.join(","),
   }
 
+  // Добавляем ID курса или репетитора
+  if (orderType === "course") {
+    orderData.course_id = Number.parseInt(document.getElementById("editCourseId").value)
+  } else {
+    orderData.tutor_id = Number.parseInt(document.getElementById("editTutorId").value)
+  }
+
   try {
     await updateOrder(orderId, orderData)
-    showNotification("Заявка успешно обновлена!", "success")
+    showNotification("Заявка обновлена!", "success")
 
     // Закрываем модальное окно
     const modal = bootstrap.Modal.getInstance(document.getElementById("editOrderModal"))
     modal.hide()
 
-    // Перезагружаем список заявок
+    // Перезагружаем список
     await loadOrders()
   } catch (error) {
-    showNotification("Ошибка обновления заявки: " + error.message, "danger")
+    showNotification("Ошибка обновления: " + error.message, "danger")
   }
 }
 
-/**
- * Подтверждение удаления заявки
- */
-function confirmDeleteOrder(orderId) {
-  document.getElementById("deleteOrderId").value = orderId
-  const modal = new bootstrap.Modal(document.getElementById("deleteOrderModal"))
-  modal.show()
-}
-
-/**
- * Удаление заявки
- */
-async function deleteOrderConfirmed() {
-  const orderId = document.getElementById("deleteOrderId").value
-
-  try {
-    await deleteOrder(orderId)
-    showNotification("Заявка успешно удалена!", "success")
-
-    // Закрываем модальное окно
-    const modal = bootstrap.Modal.getInstance(document.getElementById("deleteOrderModal"))
-    modal.hide()
-
-    // Перезагружаем список заявок
-    await loadOrders()
-  } catch (error) {
-    showNotification("Ошибка удаления заявки: " + error.message, "danger")
-  }
-}
-
-/**
- * Установка обработчиков страницы личного кабинета
- */
-function setupAccountPageHandlers() {
-  // Кнопка сохранения изменений
-  const saveEditBtn = document.getElementById("saveEditOrder")
-  if (saveEditBtn) {
-    saveEditBtn.addEventListener("click", saveEditOrder)
-  }
-
-  // Кнопка подтверждения удаления
-  const confirmDeleteBtn = document.getElementById("confirmDeleteOrder")
-  if (confirmDeleteBtn) {
-    confirmDeleteBtn.addEventListener("click", deleteOrderConfirmed)
-  }
-
-  // Обработчики для формы редактирования
-  const editDateStart = document.getElementById("editDateStart")
-  if (editDateStart) {
-    editDateStart.addEventListener("change", updateEditOrderPrice)
-  }
-
-  const editTimeStart = document.getElementById("editTimeStart")
-  if (editTimeStart) {
-    editTimeStart.addEventListener("change", updateEditOrderPrice)
-  }
-
-  const editPersons = document.getElementById("editPersons")
-  if (editPersons) {
-    editPersons.addEventListener("input", updateEditOrderPrice)
-  }
-  // Опции редактирования
-  ;[
-    "editOptSupplementary",
-    "editOptPersonalized",
-    "editOptExcursions",
-    "editOptAssessment",
-    "editOptInteractive",
-  ].forEach((id) => {
-    const el = document.getElementById(id)
-    if (el) {
-      el.addEventListener("change", updateEditOrderPrice)
-    }
-  })
-}
-
-// === Утилиты ===
-
-/**
- * Отображение уведомления
- */
-function showNotification(message, type = "info") {
-  const area = document.getElementById("notification-area")
-  if (!area) return
-
-  const toast = document.createElement("div")
-  toast.className = `toast notification-toast align-items-center text-white bg-${type} border-0`
-  toast.setAttribute("role", "alert")
-  toast.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${escapeHtml(message)}</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    `
-
-  area.appendChild(toast)
-
-  const bsToast = new bootstrap.Toast(toast, { delay: 5000 })
-  bsToast.show()
-
-  toast.addEventListener("hidden.bs.toast", () => {
-    toast.remove()
-  })
-}
-
-/**
- * Отображение пагинации
- */
-function renderPagination(containerId, totalPages, currentPage, onPageChange) {
-  const container = document.getElementById(containerId)
-  if (!container) return
-
-  const ul = container.querySelector("ul")
-  ul.innerHTML = ""
-
-  if (totalPages <= 1) return
-
-  // Кнопка "Назад"
-  const prevLi = document.createElement("li")
-  prevLi.className = `page-item ${currentPage === 1 ? "disabled" : ""}`
-  prevLi.innerHTML = '<a class="page-link" href="#">&laquo;</a>'
-  prevLi.addEventListener("click", (e) => {
-    e.preventDefault()
-    if (currentPage > 1) onPageChange(currentPage - 1)
-  })
-  ul.appendChild(prevLi)
-
-  // Номера страниц
-  for (let i = 1; i <= totalPages; i++) {
-    const li = document.createElement("li")
-    li.className = `page-item ${i === currentPage ? "active" : ""}`
-    li.innerHTML = `<a class="page-link" href="#">${i}</a>`
-    li.addEventListener("click", (e) => {
-      e.preventDefault()
-      onPageChange(i)
-    })
-    ul.appendChild(li)
-  }
-
-  // Кнопка "Вперёд"
-  const nextLi = document.createElement("li")
-  nextLi.className = `page-item ${currentPage === totalPages ? "disabled" : ""}`
-  nextLi.innerHTML = '<a class="page-link" href="#">&raquo;</a>'
-  nextLi.addEventListener("click", (e) => {
-    e.preventDefault()
-    if (currentPage < totalPages) onPageChange(currentPage + 1)
-  })
-  ul.appendChild(nextLi)
-}
-
-/**
- * Форматирование даты
- */
-function formatDate(date) {
-  const options = { day: "numeric", month: "long", year: "numeric" }
-  return date.toLocaleDateString("ru-RU", options)
-}
+// === Вспомогательные функции ===
 
 /**
  * Получение класса badge для уровня
@@ -1692,6 +1568,14 @@ function getLevelBadgeClass(level) {
     default:
       return "bg-secondary"
   }
+}
+
+/**
+ * Форматирование даты
+ */
+function formatDate(date) {
+  const options = { day: "numeric", month: "long", year: "numeric" }
+  return date.toLocaleDateString("ru-RU", options)
 }
 
 /**
@@ -1717,4 +1601,101 @@ function debounce(func, wait) {
     clearTimeout(timeout)
     timeout = setTimeout(later, wait)
   }
+}
+
+/**
+ * Отображение уведомления
+ */
+function showNotification(message, type = "info") {
+  const area = document.getElementById("notification-area")
+  if (!area) return
+
+  const id = "toast-" + Date.now()
+  const bgClass =
+    type === "danger"
+      ? "bg-danger"
+      : type === "success"
+        ? "bg-success"
+        : type === "warning"
+          ? "bg-warning text-dark"
+          : "bg-info"
+
+  const toastHtml = `
+        <div id="${id}" class="toast notification-toast ${bgClass} text-white" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body d-flex align-items-center">
+                <i class="bi ${type === "success" ? "bi-check-circle" : type === "danger" ? "bi-x-circle" : type === "warning" ? "bi-exclamation-triangle" : "bi-info-circle"} me-2 fs-5"></i>
+                <span>${escapeHtml(message)}</span>
+                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="toast" aria-label="Закрыть"></button>
+            </div>
+        </div>
+    `
+
+  area.insertAdjacentHTML("beforeend", toastHtml)
+
+  const toastEl = document.getElementById(id)
+  const toast = new bootstrap.Toast(toastEl, { delay: 5000 })
+  toast.show()
+
+  // Удаляем элемент после скрытия
+  toastEl.addEventListener("hidden.bs.toast", () => {
+    toastEl.remove()
+  })
+}
+
+/**
+ * Отображение пагинации
+ */
+function renderPagination(containerId, totalPages, currentPage, onPageChange) {
+  const container = document.getElementById(containerId)
+  if (!container) return
+
+  const ul = container.querySelector("ul")
+  if (!ul) return
+
+  if (totalPages <= 1) {
+    ul.innerHTML = ""
+    return
+  }
+
+  let html = ""
+
+  // Кнопка "Назад"
+  html += `
+        <li class="page-item ${currentPage === 1 ? "disabled" : ""}">
+            <a class="page-link" href="#" data-page="${currentPage - 1}">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+        </li>
+    `
+
+  // Страницы
+  for (let i = 1; i <= totalPages; i++) {
+    html += `
+            <li class="page-item ${i === currentPage ? "active" : ""}">
+                <a class="page-link" href="#" data-page="${i}">${i}</a>
+            </li>
+        `
+  }
+
+  // Кнопка "Вперёд"
+  html += `
+        <li class="page-item ${currentPage === totalPages ? "disabled" : ""}">
+            <a class="page-link" href="#" data-page="${currentPage + 1}">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </li>
+    `
+
+  ul.innerHTML = html
+
+  // Обработчики
+  ul.querySelectorAll(".page-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault()
+      const page = Number.parseInt(link.dataset.page)
+      if (page >= 1 && page <= totalPages && page !== currentPage) {
+        onPageChange(page)
+      }
+    })
+  })
 }
