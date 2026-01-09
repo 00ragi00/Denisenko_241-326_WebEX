@@ -3,19 +3,8 @@
  * Содержит обёртки для fetch с API key
  */
 
-// Базовый URL API + cors proxy
+// Базовый URL API
 const API_BASE_URL = "http://exam-api-courses.std-900.ist.mospolytech.ru/api"
-
-// 2. CORS прокси
-const CORS_PROXY = "https://api.allorigins.win/raw?url="
-
-// 3. Проверяем, где мы
-const isGithubPages = window.location.hostname.includes('github.io')
-
-// 4. Выбираем URL
-const url = isGithubPages 
-    ? CORS_PROXY + encodeURIComponent(fullUrl)
-    : fullUrl
 
 // Получить ключ можно по ссылке в СДО Московского Политеха
 function getApiKey() {
