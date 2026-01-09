@@ -1,4 +1,4 @@
-# inguaSchool - Education Platform
+# LinguaSchool - Education Platform
 
 Веб-платформа для записи на курсы и к репетиторам.
 
